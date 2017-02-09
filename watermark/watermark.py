@@ -1,8 +1,8 @@
 # Copyright (c) 2017 Karl Goffin
 # Released under the MIT Open Source license.
-# This is a verbose script for adding watermarks to images. It assumes you have a lighter version and a darker version,
+# This is a verbose script for adding watermarks to images. It assumes you have a light and dark version of your logo,
 # and chooses which one to use based on how dark the image is where the watermark will go. Currently you have a choice
-# of putting it in any of the corners. There are also several different way save the file. All options are detailed by
+# of putting it in any of the corners. There are several different ways to save the files. All options are detailed by
 # running the script with the '--help' option.
 
 # Written for Python 3.
