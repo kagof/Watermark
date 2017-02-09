@@ -1,0 +1,6 @@
+*.jpg
+*.png
+watermark/logopaths.py
+.idea
+watermark/__pycache__/
+!examplewatermark.jpg
