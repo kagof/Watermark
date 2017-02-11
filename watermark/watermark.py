@@ -142,6 +142,8 @@ def main():
             err += 1
             continue
 
+        info = img.info  # ensures we can retrieve file information.
+
         # finding which corner the logo is to be placed in. 490x220 are the dimensions of my watermark;
         # you will want to change these numbers to match your dimensions.
         if right_down:
@@ -178,19 +180,21 @@ def main():
             print('Done (dark)')
             sys.stdout.flush()
 
+
+
         # different save file options
         if overwrite:  # -o
-            img.save(args[i])
+            img.save(args[i], icc_profile=info['icc_profile'], subsampling='keep', adobe=('adobe' in info), qtables='keep', quality=100, exif=info['exif'])
         elif new_folder:  # -n
             tail, head = path.split(args[i])
             filename, ext = path.splitext(head)
             if not path.exists(tail + '/Watermarked/'):
                 mkdir(tail + '/Watermarked/')
-            img.save(tail + '/Watermarked/' + filename + '_WM' + ext)
+            img.save(tail + '/Watermarked/' + filename + '_WM' + ext, icc_profile=info['icc_profile'], subsampling='keep', adobe=('adobe' in info), qtables='keep', quality=100, exif=info['exif'])
 
         else:  # vanilla
             filename, ext = path.splitext(args[i])
-            img.save(filename + '_WM' + ext)
+            img.save(filename + '_WM' + ext, icc_profile=info['icc_profile'], subsampling='keep', adobe=('adobe' in info), qtables='keep', quality=100, exif=info['exif'])
 
     print(str(num_times - err) + '/' + str(num_times) + ' files successfully watermarked.')
 if __name__ == '__main__':
