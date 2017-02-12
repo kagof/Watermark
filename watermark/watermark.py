@@ -23,6 +23,7 @@ import logopaths
 def main():
     overwrite = False
     new_folder = False
+    only_new = False;
     is_folder = False
     position_set = False
     left_up = False
@@ -31,7 +32,7 @@ def main():
     right_down = True
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'onf1234', ['help'])
+        opts, args = getopt.getopt(sys.argv[1:], 'onNf1234', ['help'])
         num_times = len(args)
         if num_times < 1 and '--help' not in [x[0] for x in opts]:
             print('usage: watermark [options] file1 [file2 ...]')
@@ -65,6 +66,12 @@ def main():
                 print('Overwrite and new folder options are incompatible.')
                 exit(2)
             new_folder = True
+        elif opt == '-N':
+            if overwrite:
+                print('Overwrite and new folder options are incompatible.')
+                exit(2)
+            new_folder = True
+            only_new = True  # note that if options -n and -N, program behave as if just -N option selected.
         elif opt == '-f':
             is_folder = True
         elif opt == '-1':
@@ -99,6 +106,7 @@ def main():
             print('OPTIONS:')
             print('-o\t Turn on overwrite mode. Will overwrite the original file.')
             print('-n\t Save files to new child folder \'Watermarked\'.')
+            print('-N\t Save files to new child folder \'Waterkarked\', ignoring files which are already there.')
             print('-f\t arg1 is a folder containing the images to be watermarked. Only reads arg1. Not recursive.\n')
             print('-1\t Print watermark in the upper left corner. Placed in bottom right by default.')
             print('-2\t Print watermark in the upper right corner. Placed in bottom right by default.')
@@ -132,6 +140,13 @@ def main():
     err = 0
 
     for i in range(0, num_times):
+        if only_new:  # -N check if file already is watermarked
+            tail, head = path.split(args[i])
+            filename, ext = path.splitext(head)
+            if path.isfile(tail + '/Watermarked/' + filename + '_WM' + ext):
+                print('Skipping image ' + str(i + 1) + ' of ' + str(num_times) + '.')
+                continue
+
         print('Watermarking image ' + str(i + 1) + ' of ' + str(num_times) + '........', end='')
         sys.stdout.flush()
         try:
@@ -185,11 +200,9 @@ def main():
         # different save file options
         if overwrite:  # -o
             img.save(args[i], icc_profile=info['icc_profile'], subsampling='keep', adobe=('adobe' in info), qtables='keep', quality=100, exif=info['exif'])
-        elif new_folder:  # -n
+        elif new_folder:  # -n or -N
             tail, head = path.split(args[i])
             filename, ext = path.splitext(head)
-            if not path.exists(tail + '/Watermarked/'):
-                mkdir(tail + '/Watermarked/')
             img.save(tail + '/Watermarked/' + filename + '_WM' + ext, icc_profile=info['icc_profile'], subsampling='keep', adobe=('adobe' in info), qtables='keep', quality=100, exif=info['exif'])
 
         else:  # vanilla
